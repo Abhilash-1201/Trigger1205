@@ -126,50 +126,7 @@ runs:
         sleep 2
         
        
-        
-        while [ "$BUILDING" == "true" ]
-        do 
-            #WAIT pollTime SECONDS
-            echo "pause for $pollTime seconds"
-            echo "--------------------------------------"
-            sleep $pollTime
-            currentTimeSeconds=$(date +%s)
-            if [[ "$currentTimeSeconds" > "$endTimeSeconds" ]]; then
-              echo "Timeout value reached. Exiting with error due to timeout"
-              echo "--------------------------------------"
-              exit 1
-            fi
-            #Get the status
-            echo "Query Build Job Status"
-            echo "--------------------------------------"
-            JOBSTATUSJSON=$(curl -s -X GET -u "$userName:$password"   "$BUILDURL/api/json?pretty=true")
-            regex="\"building\"\s*:\s*([a-z]+).*?\"result\"\s*:\s*\"?([a-zA-Z]+)\"?."
-            if [[ $JOBSTATUSJSON =~ $regex ]]; then
-              if [[ $verbose == true ]]; then
-                echo "Job Status"
-                echo "building: " ${BASH_REMATCH[1]} ;
-                echo "result: " ${BASH_REMATCH[2]} ;
-              fi
-              BUILDING=${BASH_REMATCH[1]} ;
-              RESULT=${BASH_REMATCH[2]} ;
-            else
-                echo "Build status NOT FOUND. Exiting script with error"
-                echo "--------------------------------------"
-                exit 1 
-            fi
-        done 
-        #Once I reach here, building is false, so the job isn't running any longer
-        #Therefor, we can check the result
-        case $RESULT in
-            SUCCESS)
-                echo "Build completed successfully"
-                exit 0
-                ;;
-            *)
-                echo "Build DID NOT COMPLETE successfully"
-                exit 1
-                ;;
-        esac
+
       shell: bash
 branding:
   icon: 'arrow-down-circle'
